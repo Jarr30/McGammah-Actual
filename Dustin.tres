@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://McGammah-Actual/BaseEnemy.gd" type="Script" id=1]
+[ext_resource path="res://McGammah-Actual/pixil-frame-0 (2).png" type="Texture" id=2]
+
+[resource]
+script = ExtResource( 1 )
+name = "Dustin"
+texture = ExtResource( 2 )
+health = 45
+damage = 15
