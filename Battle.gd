@@ -81,8 +81,8 @@ func _on_Attack_pressed() -> void:
 		yield($AnimationPlayer, "animation_finished")
 		yield(get_tree().create_timer(0.1), "timeout")
 		get_tree().quit()
-		
-	enemy_turn()
+	else:
+		enemy_turn()
 
 func _on_Defend_pressed() -> void:
 	is_defending = true
