@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource( 1 )
-name = "Dustin"
+name = "Alex"
 texture = ExtResource( 2 )
-health = 45
-damage = 15
+health = 35
+damage = 5

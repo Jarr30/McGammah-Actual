@@ -6,6 +6,7 @@ export(Resource) var enemy = null
 
 var current_player_health = 0
 var current_enemy_health = 0
+var is_defending = false
 
 func _ready():
 	set_health($EnemyContainer/ProgressBar, enemy.health, enemy.health)
@@ -33,6 +34,7 @@ func _input(event):
 		emit_signal("textbox_closed")
 
 func display_text(text):
+	$ActionsPanel.hide()
 	$TextBox.show()
 	$TextBox/Label.text = text
 	
@@ -40,14 +42,20 @@ func enemy_turn():
 	display_text("%s played 3 hours of shreksaphone!" % enemy.name.to_upper())
 	yield(self, "textbox_closed")
 	
-	current_player_health = max(0, current_player_health - enemy.damage)
-	set_health($PlayerPanel/PlayerData/ProgressBar, current_player_health, State.max_health)
-	
-	$AnimationPlayer.play("shake")
-	yield($AnimationPlayer, "animation_finished")
-	
-	display_text("%s dealt %d damage!" % [enemy.name.to_upper(), enemy.damage])
-	yield(self, "textbox_closed")
+	if is_defending:
+		is_defending = false
+		$AnimationPlayer.play("mini_shake")
+		yield($AnimationPlayer, "animation_finished")
+		display_text("You effectively avoided the Shreksaphone!")
+		yield(self, "textbox_closed")
+	else:
+		current_player_health = max(0, current_player_health - enemy.damage)
+		set_health($PlayerPanel/PlayerData/ProgressBar, current_player_health, State.max_health)
+		$AnimationPlayer.play("shake")
+		yield($AnimationPlayer, "animation_finished")
+		display_text("%s dealt %d damage!" % [enemy.name.to_upper(), enemy.damage])
+		yield(self, "textbox_closed")
+	$ActionsPanel.show()
 
 func _on_Run_pressed() -> void:
 	display_text("You ran like a coward!")
@@ -65,4 +73,22 @@ func _on_Attack_pressed() -> void:
 	$AnimationPlayer.play("enemy_damaged")
 	yield($AnimationPlayer, "animation_finished")
 
+	if current_enemy_health == 0:
+		display_text("%s was defeated!" % enemy.name)
+		yield(self, "textbox_closed")
+		
+		$AnimationPlayer.play("enemy_died")
+		yield($AnimationPlayer, "animation_finished")
+		yield(get_tree().create_timer(0.1), "timeout")
+		get_tree().quit()
+		
+	enemy_turn()
+
+func _on_Defend_pressed() -> void:
+	is_defending = true
+	display_text("You lock his screen in preparation!")
+	yield(self, "textbox_closed")
+	
+	yield(get_tree().create_timer(0.25), "timeout")
+	
 	enemy_turn()
