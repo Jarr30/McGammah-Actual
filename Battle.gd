@@ -55,7 +55,13 @@ func enemy_turn():
 		yield($AnimationPlayer, "animation_finished")
 		display_text("%s dealt %d damage!" % [enemy.name.to_upper(), enemy.damage])
 		yield(self, "textbox_closed")
-	$ActionsPanel.show()
+	if current_player_health == 0:
+		display_text("%s made you quit, maybe you can talk to the rubber duck about it. :(" % enemy.name.to_upper())
+		yield(self, "textbox_closed")
+		yield(get_tree().create_timer(0.25), "timeout")
+		get_tree().quit()
+	else:
+		$ActionsPanel.show()
 
 func _on_Run_pressed() -> void:
 	display_text("You ran like a coward!")
@@ -74,7 +80,7 @@ func _on_Attack_pressed() -> void:
 	yield($AnimationPlayer, "animation_finished")
 
 	if current_enemy_health == 0:
-		display_text("%s was defeated!" % enemy.name)
+		display_text("%s started crying and got back to work!" % enemy.name)
 		yield(self, "textbox_closed")
 		
 		$AnimationPlayer.play("enemy_died")
@@ -91,4 +97,4 @@ func _on_Defend_pressed() -> void:
 	
 	yield(get_tree().create_timer(0.25), "timeout")
 	
-	enemy_turn()
+	$ActionsPanel.show()
